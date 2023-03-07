@@ -1,0 +1,20 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "catalog.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node catalog.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.8.11",
+    "@grpc/proto-loader": "^0.7.5",
+    "async": "^3.2.4",
+    "dotenv": "^16.0.3",
+    "protobufs": "^0.1.0"
+  }
+}
