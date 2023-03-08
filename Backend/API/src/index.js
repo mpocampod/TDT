@@ -11,7 +11,7 @@ const serverProto = grpc.loadPackageDefinition(packageDefinition).inventory;
 
 
 const pythonService = new serverProto.InventoryService('localhost:50051', grpc.credentials.createInsecure());
-const nodeService = new serverProto.CatalogService('localhost:50052', grpc.credentials.createInsecure());
+const nodeService = new serverProto.CatalogService('localhost:5000', grpc.credentials.createInsecure());
 
 app.post('/add-product', (req, res) => {
   const products = req.body.product_name;
@@ -24,21 +24,23 @@ app.post('/add-product', (req, res) => {
   pythonService.AddProducts(productList, (err, response) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: 'Error' });
     }
     res.json({ message: 'Agregado correctamente' });
   });
 });
 
 app.get('/view-products', (req, res) => {
+  const productName = req.query.product_name;
   nodeService.GetProducts({},(err, response) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: 'Error' });
     }
     res.json(response);
   });
 });
+
 
 app.listen(3000, () => {
   console.log('API gateway escuchando por el puerto 3000');

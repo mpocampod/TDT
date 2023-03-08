@@ -29,25 +29,25 @@ function AddProducts(call, callback) {
   });
 }
 
-function GetProducts(callback) {
-  pythonService.GetProducts({}, (err, response) => {
+function GetProducts(call,callback) {
+  pythonService.GetProducts({},(err, response) => {
     if (err) {
       return callback(err);
     }
-    const productList = response.productsList.map(product => ({
-      product_name: product.productName,
+    const products = response.products.map(product => ({
+      product_name: product.product_name,
       quantity: product.quantity,
     }));
-    callback(null, productList);
+     callback(null, products);
   });
 }
 
 function main() {
   const server = new grpc.Server();
   server.addService(serverProto.CatalogService.service, { AddProducts, GetProducts });
-  server.bindAsync('0.0.0.0:50052', grpc.ServerCredentials.createInsecure(),() => {
+  server.bindAsync('0.0.0.0:5000', grpc.ServerCredentials.createInsecure(),() => {
   server.start();
-  console.log('Server started on port 50052');
+  console.log('Server started on port 5000');
   })
 }
 
