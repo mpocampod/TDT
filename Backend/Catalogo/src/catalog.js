@@ -18,12 +18,9 @@ const serverProto = grpc.loadPackageDefinition(packageDefinition).inventory;
 
 const pythonService = new serverProto.InventoryService('localhost:50051', grpc.credentials.createInsecure());
 
-const products = [];
-const quantities = [];
-
-function addProduct(call, callback) {
+function AddProducts(call, callback) {
   const { product_name, quantity } = call.request;
-  pythonService.addProduct({ product_name, quantity }, (err, response) => {
+  pythonService.AddProducts({ product_name, quantity }, (err, response) => {
     if (err) {
       callback(err);
     } else {
@@ -32,19 +29,25 @@ function addProduct(call, callback) {
   });
 }
 
-function getProducts(call, callback) {
-  const productsList = products.map((product, i) => ({ product_name: product, quantity: quantities[i] }));
-  callback(null, { products: productsList });
+function GetProducts(callback) {
+  pythonService.GetProducts({}, (err, response) => {
+    if (err) {
+      return callback(err);
+    }
+    const productList = response.productsList.map(product => ({
+      product_name: product.productName,
+      quantity: product.quantity,
+    }));
+    callback(null, productList);
+  });
 }
 
 function main() {
   const server = new grpc.Server();
-  server.addService(serverProto.InventoryService.service, { addProduct, getProducts });
+  server.addService(serverProto.CatalogService.service, { AddProducts, GetProducts });
   server.bindAsync('0.0.0.0:50052', grpc.ServerCredentials.createInsecure(),() => {
   server.start();
   console.log('Server started on port 50052');
-  console.log(products[0]);
-  console.log(quantities[0]);
   })
 }
 

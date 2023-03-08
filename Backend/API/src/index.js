@@ -10,35 +10,37 @@ const packageDefinition = protoLoader.loadSync('../protobufs/server.proto');
 const serverProto = grpc.loadPackageDefinition(packageDefinition).inventory;
 
 
-const pythonService = new serverProto.InventoryService('localhost:50052', grpc.credentials.createInsecure());
-const nodeService = new serverProto.InventoryService('localhost:50052', grpc.credentials.createInsecure());
-
-
-app.post('/products', (req, res) => {
-  const product_name = req.body.product_name;
-  const quantity = req.body.quantity;
-  pythonService.getProduct({}, (err, response) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
-    const products = response.products.map(product => ({ product_name: product.product_name, quantity: product.quantity }));
-    res.json(products);
-  });
-});
+const pythonService = new serverProto.InventoryService('localhost:50051', grpc.credentials.createInsecure());
+const nodeService = new serverProto.CatalogService('localhost:50052', grpc.credentials.createInsecure());
 
 app.post('/add-product', (req, res) => {
-  const productName = req.body.product_name;
-  const quantity = req.body.quantity;
+  const products = req.body.product_name;
+  const quantities = req.body.quantity;
+  const productMessages = products.map((product, index) => {
+    return { product_name: product , quantity: quantities[index] };
+  });
+  const productList = { products: productMessages };
 
-  nodeService.addProduct({ product_name: productName, quantity: quantity }, (err, response) => {
+  pythonService.AddProducts(productList, (err, response) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.json({ message: 'Product added successfully' });
+    res.json({ message: 'Agregado correctamente' });
   });
 });
-app.listen(3000, () => {
-  console.log('API Gateway listening on port 3000');
+
+app.get('/view-products', (req, res) => {
+  nodeService.GetProducts({},(err, response) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+    res.json(response);
+  });
 });
+
+app.listen(3000, () => {
+  console.log('API gateway escuchando por el puerto 3000');
+});
+
