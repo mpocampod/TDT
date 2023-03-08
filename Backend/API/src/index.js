@@ -30,9 +30,9 @@ app.post('/add-product', (req, res) => {
   });
 });
 
-app.get('/view-products', (req, res) => {
-  const productName = req.query.product_name;
-  nodeService.GetProducts({},(err, response) => {
+app.get('/view-productsInv', (req, res) => {
+  
+  pythonService.GetProducts({},(err, response) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Error' });
@@ -41,6 +41,16 @@ app.get('/view-products', (req, res) => {
   });
 });
 
+app.get('/view-productsCat', (req, res) => {
+  
+  nodeService.GetProducts({},(err, response) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error' });
+    }
+    res.json(response);
+  });
+});
 
 app.listen(3000, () => {
   console.log('API gateway escuchando por el puerto 3000');
