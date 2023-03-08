@@ -30,7 +30,7 @@ def serve():
     server_pb2_grpc.add_InventoryServiceServicer_to_server(InventoryServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
-    print("Server started on port 50051")
+    print("Servidor inicializado en el puerto 50051")
     server.wait_for_termination()
 
 if __name__ == '__main__':

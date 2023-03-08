@@ -47,7 +47,7 @@ function main() {
   server.addService(serverProto.CatalogService.service, { AddProducts, GetProducts });
   server.bindAsync('0.0.0.0:5000', grpc.ServerCredentials.createInsecure(),() => {
   server.start();
-  console.log('Server started on port 5000');
+  console.log('Servidor inicializado en el puerto 5000');
   })
 }
 
