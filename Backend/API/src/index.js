@@ -1,17 +1,24 @@
 const express = require('express');
-const grpc = require('grpc');
+const grpc = require ('grpc');
 const protoLoader = require('@grpc/proto-loader');
 const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
 
-const packageDefinition = protoLoader.loadSync('../protobufs/server.proto');
+const packageDefinition = protoLoader.loadSync(
+  '../protobufs/server.proto', 
+  {keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+   });
+  
 const serverProto = grpc.loadPackageDefinition(packageDefinition).inventory;
-
-
 const pythonService = new serverProto.InventoryService('localhost:50051', grpc.credentials.createInsecure());
 const nodeService = new serverProto.CatalogService('localhost:5000', grpc.credentials.createInsecure());
+
 
 app.post('/add-product', (req, res) => {
   const products = req.body.product_name;
@@ -26,31 +33,46 @@ app.post('/add-product', (req, res) => {
       console.error(err);
       return res.status(500).json({ error: 'Error' });
     }
+    console.log(JSON.stringify(productList));
     res.json({ message: 'Agregado correctamente' });
   });
 });
 
-app.get('/view-productsInv', (req, res) => {
-  
-  pythonService.GetProducts({},(err, response) => {
+app.get('/view-product', (req, res) => {
+  ans=pythonService.GetProducts({},(err) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Error' });
     }
-    res.json(response);
+    res.json(ans);
   });
 });
 
-app.get('/view-productsCat', (req, res) => {
-  
+app.get('/view-products', (req, res) => {
+
   nodeService.GetProducts({},(err, response) => {
+
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Error' });
     }
-    res.json(response);
+    
+    const productList = {
+      products: response.products.map(Product => ({
+        product_name: Product.product_name,
+        quantity: Product.quantity,
+      }))
+    };
+
+    const productListResponse = {
+      productList: productList
+    };
+
+    res.json(productListResponse);
+    console.log(JSON.stringify(productList));
   });
 });
+
 
 app.listen(3000, () => {
   console.log('API gateway escuchando por el puerto 3000');

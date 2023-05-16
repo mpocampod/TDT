@@ -6,16 +6,24 @@ import server_pb2_grpc
 
 class InventoryServicer(server_pb2_grpc.InventoryServiceServicer):
 
+
     def __init__(self):
-        self.products = []
-        self.quantities = []
+        self.products = ["top"]
+        self.quantities = [2]
 
     def GetProducts(self, request, context):
         # Retorna el catálogo actual de productos y cantidades
+        print("entra a python")
+        print (request)
         productList = server_pb2.ProductList()
+        #print(self.products)
+        #print(self.quantities)
         for product, quantity in zip(self.products, self.quantities):
             productList.products.add(product_name=product, quantity=quantity)
+            print("entra a python2")
+        print(productList)
         return productList
+    
 
     def AddProducts(self, request, context):
         # Agrega los productos y cantidades recibidos en el mensaje a los arrays del inventario

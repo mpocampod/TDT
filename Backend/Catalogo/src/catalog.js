@@ -30,15 +30,23 @@ function AddProducts(call, callback) {
 }
 
 function GetProducts(call,callback) {
-  pythonService.GetProducts({},(err, response) => {
+
+  pythonService.GetProducts({}, (err, response) => {
+  console.log("llama a python");
     if (err) {
+      console.log("entra error(?)")
+      console.error(err);
       return callback(err);
     }
-    const products = response.products.map(product => ({
-      product_name: product.product_name,
-      quantity: product.quantity,
-    }));
-     callback(null, products);
+
+    const productList = {
+      products: response.products.map(product => ({
+        product_name: product.product_name,
+        quantity: product.quantity,
+     }))
+    };
+     console.log(productList)
+     callback(null, productList);
   });
 }
 
