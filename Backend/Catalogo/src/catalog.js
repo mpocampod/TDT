@@ -32,7 +32,7 @@ function AddProducts(call, callback) {
 function GetProducts(call,callback) {
 
   pythonService.GetProducts({}, (err, response) => {
-  console.log("llama a python");
+
     if (err) {
       console.log("entra error(?)")
       console.error(err);

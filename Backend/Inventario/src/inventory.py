@@ -13,14 +13,13 @@ class InventoryServicer(server_pb2_grpc.InventoryServiceServicer):
 
     def GetProducts(self, request, context):
         # Retorna el catálogo actual de productos y cantidades
-        print("entra a python")
-        print (request)
+
+        #print (request)
         productList = server_pb2.ProductList()
         #print(self.products)
         #print(self.quantities)
         for product, quantity in zip(self.products, self.quantities):
             productList.products.add(product_name=product, quantity=quantity)
-            print("entra a python2")
         print(productList)
         return productList
     
