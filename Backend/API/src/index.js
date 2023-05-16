@@ -38,15 +38,6 @@ app.post('/add-product', (req, res) => {
   });
 });
 
-app.get('/view-product', (req, res) => {
-  ans=pythonService.GetProducts({},(err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Error' });
-    }
-    res.json(ans);
-  });
-});
 
 app.get('/view-products', (req, res) => {
 
